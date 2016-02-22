@@ -1,0 +1,13 @@
+$borderColor: #eeccff;
+
+img{
+  border-style: solid;
+  border-color: $borderColor;
+  width: 100%;
+  height: auto;
+}
+
+table{
+ border: 1px solid;
+ border-color: $borderColor;
+}

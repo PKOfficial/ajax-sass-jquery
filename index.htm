@@ -1,0 +1,155 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>UI Assignment</title>
+    <script src="jquery-2.2.0.min.js"></script>
+    <link rel="stylesheet" href="css/bootstrap.min.css">
+    <link rel="stylesheet" href="sass/style.css">
+    <script src="js/bootstrap.min.js"></script>
+    <!--<style>
+    img {
+    width: 100%;
+    height: auto;
+    }
+  </style>-->
+    <script>
+      $(document).ready(function(){
+        $("#sSlide").click(function(){
+            $(this).addClass("active");
+            $('#fSlide').removeClass("active");
+            $('#tSlide').removeClass("active");
+            $("img").hide("slide");
+            $("#img2").show("slow")
+        });
+        $("#fSlide").click(function(){
+            $(this).addClass("active");
+            $('#sSlide').removeClass("active");
+            $('#tSlide').removeClass("active");
+            $("img").hide("slide");
+            $("#img1").show("slow")
+        });
+        $("#tSlide").click(function(){
+            $(this).addClass("active");
+            $('#sSlide').removeClass("active");
+            $('#fSlide').removeClass("active");
+            $("img").hide("slide");
+            $("#img3").show("slow")
+        });
+        $("#submit").click(function(){
+          if($('#stuid').val() == "")
+          {
+            return alert("Enter Some text");
+          }
+		        $.get("http://localhost:9000/student/"+parseInt($('#stuid').val()), function(data, status){
+                if(data.id === -999){
+                  $('table').remove();
+                  return $('#div-table').append('<table class="table" id="table1"><tr><td style="color:red">[Error] ID not found</td></tr></table>');
+                }
+                $('table').remove();
+                $('#div-table').append('<table class="table" id="table1"><tr><td><b>ID:</b></td><td>'+data.id+'</td></tr><tr><td><b>Name:</b></td><td>'+data.name+'</td></tr><tr><td><b>Email:</b></td><td>'+data.email+'</td></tr></table>');
+		        });
+			  });
+
+        $("#btn-showall").click(function(){
+  		        $.post("http://localhost:9000/student/all", function(data, status){
+                  $('table').remove();
+                  var tableStr = '<table class="table" id="table1">';
+                  tableStr += '<tr>';
+                  tableStr += '<td><b>ID</b></td>';
+                  tableStr += '<td><b>Name</b></td>';
+                  tableStr += '<td><b>Email</b></td>';
+                  tableStr += '</tr>';
+
+                  $.each(data, function(i, item) {
+                    tableStr += '<tr>';
+                    tableStr += '<td>'+data[i].id+'</td>';
+                    tableStr += '<td>'+data[i].name+'</td>';
+                    tableStr += '<td>'+data[i].email+'</td>';
+                    tableStr += '</tr>';
+                  });
+                  tableStr += '</table>';
+                  //alert(JSON.stringify(data))
+                  $('#div-table').append(tableStr);
+  		        });
+  			  });
+
+          //Save Data
+          $('#btn-add').click(function(){
+            var id = $('#aID').val();
+            var name = $('#aName').val();
+            var email = $('#aEmail').val();
+            $.ajax({
+              url: "http://localhost:9000/student/save",
+              type: "POST",
+              data: {"id":id,"name":name,"email":email},
+              contentType: "application/json",
+              dataType: "json",
+              success: function(data, status){
+                 alert(data+" ; "+status)
+              }
+            });
+            // $.post("http://localhost:9000/student/save",{"id":id,"name":name,"email":email}, function(data, status){
+            //   alert(data+" ; "+status)
+            // });
+          });
+
+      });
+    </script>
+
+  </head>
+  <body>
+    <div class="container">
+      <div class="page-header">
+          <h1>User Interface Assignment <small>Ajax+sass+jquery</small></h1>
+          <!--<ul class="nav nav-pills">
+            <li role="presentation" class="active"><a href="#">Home</a></li>
+            <li role="presentation"><a href="#">Profile</a></li>
+            <li role="presentation"><a href="#">Messages</a></li>
+          </ul>-->
+      </div>
+      <div class="page-header" id="header">
+        <img id="img1" src="slide1.jpg" class="img-rounded" alt="Slide 1" height="500px" class="col-md-12">
+        <img id="img2" src="slide2.jpg" class="img-rounded" alt="Slide 2" height="500px" style="display: None;" class="col-md-12">
+        <img id="img3" src="slide3.jpg" class="img-rounded" alt="Slide 3" height="500px" style="display: None;" class="col-md-12">
+        <ul class="nav nav-pills nav-justified">
+          <li role="presentation" class="active" id="fSlide"><a href="#header">Slide 1</a></li>
+          <li role="presentation" id="sSlide"><a href="#header">Slide 2</a></li>
+          <li role="presentation" id="tSlide"><a href="#header">Slide 3</a></li>
+        </ul>
+      </div>
+        <div class="col-md-12">
+          <div class="col-md-6">
+        <div class="form-group">
+          <label for="id">Id:</label>
+          <input type="id" class="form-control" id="stuid" placeholder="Enter Id or all">
+        </div>
+        <button type="submit" id="submit" class="btn btn-default">Submit</button>
+        <button type="submit" id="btn-showall" class="btn btn-default">Show All</button>
+        <h2>Add New Data</h2>
+        <div class="form-group">
+          <label for="aID">ID:</label>
+          <input type="aID" class="form-control" id="aID" placeholder="Enter Id">
+        </div>
+        <div class="form-group">
+          <label for="aName">Name:</label>
+          <input type="aName" class="form-control" id="aName" placeholder="Enter Id">
+        </div>
+        <div class="form-group">
+          <label for="aEmail">Email:</label>
+          <input type="aEmail" class="form-control" id="aEmail" placeholder="Enter Id">
+        </div>
+        <button type="submit" id="btn-add" class="btn btn-default">Add</button>
+      </div>
+      <div class="col-md-6">
+        <h1>Retrived Data</h1>
+      <div class="table-responsive" id="div-table">
+      </div>
+    </div>
+  </div>
+  </div>
+  <!--Footer-->
+  <footer style="margin-top:45px;margin-bottom:5px;text-align:center">
+    <h1>This is my Footer</h1>
+  </footer>
+  </body>
+</html>
