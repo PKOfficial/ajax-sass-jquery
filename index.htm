@@ -75,13 +75,13 @@
 
           //Save Data
           $('#btn-add').click(function(){
-            var id = $('#aID').val();
+            var id = parseInt($('#aID').val());
             var name = $('#aName').val();
             var email = $('#aEmail').val();
             $.ajax({
               url: "http://localhost:9000/student/save",
               type: "POST",
-              data: {"id":id,"name":name,"email":email},
+              data: JSON.stringify({"id":id,"name":name,"email":email}),
               contentType: "application/json",
               dataType: "json",
               success: function(data, status){
